@@ -1,6 +1,6 @@
 {
   "name": "@sekimori/doctor",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "sekimori doctor — read-only OpenTelemetry readiness report for Lambda functions and cdk.out templates.",
   "keywords": [
     "opentelemetry",
