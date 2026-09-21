@@ -1,0 +1,11 @@
+# sekimori
+
+## 0.1.0
+
+### Minor Changes
+
+- [#1](https://github.com/seike460/sekimori/pull/1) [`0cafea5`](https://github.com/seike460/sekimori/commit/0cafea50f91a1b77b092e5f8ba91e8220ca88ae3) Thanks [@seike460](https://github.com/seike460)! - Fill in every boundary the design promised: SNS (Publish/PublishBatch inject, direct-invoke extract), Step Functions (`traceHeader` + `input._trace`), API Gateway HTTP API (SERVER span parented on the client), DynamoDB Streams and Kinesis (experimental opt-in carriers), the EventBridge→SQS `detail` fallback (`source: "body-detail"`, resolving OQ-1), a Powertools `Tracer`-compatible shim at `sekimori/tracer`, the `sekimori migrate` codemod (`aws-xray-sdk-core` / Powertools → OTel API with a manual-work report), `sekimori doctor` (cdk.out template + live function readiness), and an X-Ray `BatchGetTraces` fallback for the probe assert when Transaction Search is off.
+
+- [#1](https://github.com/seike460/sekimori/pull/1) [`0cafea5`](https://github.com/seike460/sekimori/commit/0cafea50f91a1b77b092e5f8ba91e8220ca88ae3) Thanks [@seike460](https://github.com/seike460)! - Initial release. EventBridge and SQS boundaries: inject (W3C carrier + native X-Ray header where it
+  helps), extract with a documented precedence order, and per-record CONSUMER spans linked to the
+  producer. Contract-tested against a plain OTel SDK and the ADOT Lambda layer propagator set.

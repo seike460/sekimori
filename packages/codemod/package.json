@@ -1,6 +1,6 @@
 {
   "name": "@sekimori/codemod",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Codemod: aws-xray-sdk-core / Powertools for AWS Lambda Tracer → OpenTelemetry API (sekimori migrate).",
   "keywords": [
     "opentelemetry",

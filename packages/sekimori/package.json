@@ -1,6 +1,6 @@
 {
   "name": "sekimori",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "関守 — carries OpenTelemetry trace context through every gate of your TypeScript Lambda: EventBridge, SQS, SNS, Step Functions.",
   "keywords": [
     "opentelemetry",

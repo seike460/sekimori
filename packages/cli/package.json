@@ -1,6 +1,6 @@
 {
   "name": "@sekimori/cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "sekimori CLI — probe (prove the trace link), migrate (X-Ray SDK → OpenTelemetry codemod), doctor (Lambda OTel readiness).",
   "keywords": [
     "opentelemetry",
