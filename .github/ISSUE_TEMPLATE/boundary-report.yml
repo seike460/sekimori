@@ -1,0 +1,28 @@
+name: Boundary report — 境界で trace context が落ちた
+description: どの関所で context が落ちたかを記録します。レシピは BOUNDARIES.md に著者名付きで載ります。
+title: "[boundary] "
+labels: ["boundary-report"]
+body:
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Boundary / 境界
+      options: [EventBridge → Lambda, EventBridge → SQS → Lambda, SQS batch → Lambda, SNS → SQS → Lambda, Step Functions task, DynamoDB Streams, Kinesis, S3 event, API Gateway HTTP API, Lambda async destination, other]
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: What you expected / 期待した挙動 }
+    validations: { required: true }
+  - type: textarea
+    id: observed
+    attributes: { label: What the console showed / console に見えたもの, description: "link / orphan trace / new trace / nothing" }
+    validations: { required: true }
+  - type: textarea
+    id: shape
+    attributes: { label: Message shape / message の形, description: "attributes? payload? SNS envelope? raw delivery?" }
+  - type: textarea
+    id: recipe
+    attributes: { label: Recipe that fixed it / 直したレシピ (if any) }
+  - type: textarea
+    id: probe
+    attributes: { label: probe output / probe の出力 (if any) }

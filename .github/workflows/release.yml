@@ -1,0 +1,113 @@
+# Release (main push / manual): changesets が Release PR を切り、merge で
+# npm publish — provenance 付き、OIDC 認証 (id-token)、npmrc に token を書かない。
+# publish 系 step の action はすべて SHA pin。
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # publish job は id-token: write を持つため action は SHA pin する（mutable tag 回避）。
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          # packageManager (pnpm@10.34.5) に合わせる — 浮いた version 指定にしない。
+          version: 10.34.5
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+          # registry-url は書かない — token 入りの .npmrc を生成させず OIDC 経路を確保する。
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Assert npm CLI >= 11.5.1 (OIDC trusted publishing)
+        # pnpm ≤10 の `publish` は npm CLI に委譲するため、OIDC 交換を実際に担うのは
+        # PATH 上の npm（node-version の bundled 版）。npm <11.5.1 だと Release PR
+        # merge 後に publish が ENEEDAUTH で失敗する — version bump 前にここで止める。
+        run: |
+          npm_ver=$(npm --version)
+          node -e "const v=process.argv[1].split('.').map(Number); if (v[0]<11||(v[0]===11&&v[1]<5)||(v[0]===11&&v[1]===5&&v[2]<1)) { console.error('npm '+process.argv[1]+' < 11.5.1 — OIDC trusted publishing requires npm >= 11.5.1 (bundled with Node 24+)'); process.exit(1) }" "$npm_ver"
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        with:
+          # main に pending changeset があれば "Release PR" を自動生成。
+          # Release PR を merge 後は `publish: pnpm run release` が走り、build →
+          # `changeset publish` → `pnpm publish --provenance` で npm に公開する。
+          # 認証は npm Trusted Publishing (OIDC) のみ — NPM_TOKEN を env に置かない。
+          # pnpm ≤10 の publish は npm CLI へ委譲するため、OIDC 交換は PATH 上の
+          # npm ≥11.5.1 が担う（直前の step で下限を assert 済み）。
+          # 前提: npmjs.com で各パッケージに trusted publisher（この repo の release.yml）
+          # を登録済みであること。未登録なら publish は fail する。
+          version: pnpm run version-packages
+          publish: pnpm run release
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+
+      - name: Verify npm provenance attestation (post-publish smoke)
+        if: steps.changesets.outputs.published == 'true'
+        # `npm audit signatures` は registry 署名を検証するが、provenance attestation が
+        # 無いパッケージを fail しない。`npm view ... dist.attestations` で attestation の
+        # 存在そのものを assert する。
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/provenance-check && cd /tmp/provenance-check
+          npm init -y >/dev/null
+          # publish 対象は packages/*/package.json から導出（private は除く）— 新パッケージ追加で
+          # このリストが腐らないようにする。
+          for pkg in "$GITHUB_WORKSPACE"/packages/*/package.json; do
+            [ "$(node -p "require('$pkg').private === true")" = "true" ] && continue
+            name=$(node -p "require('$pkg').name")
+            ver=$(node -p "require('$pkg').version")
+            # publish 直後は registry 伝播遅延で 404 になり得る — retry して待つ。
+            ok=0
+            for i in 1 2 3 4 5; do
+              if npm install "$name@$ver"; then ok=1; break; fi
+              echo "waiting for $name@$ver on npm ($i/5)" && sleep 20
+            done
+            [ "$ok" = 1 ] || { echo "FAILED: $name@$ver is not installable"; exit 1; }
+            # provenance attestation の存在を確認（`npm audit signatures` は無くても pass する）。
+            # attestation の転記も registry 伝播に乗るため install と同様に retry する。
+            attest=""
+            for i in 1 2 3 4 5; do
+              attest=$(npm view "$name@$ver" dist.attestations --json 2>/dev/null || true)
+              if [ -n "$attest" ] && [ "$attest" != "null" ] && [ "$attest" != "{}" ] && echo "$attest" | grep -q provenance; then
+                break
+              fi
+              attest=""
+              echo "waiting for provenance attestation on $name@$ver ($i/5)" && sleep 20
+            done
+            if [ -z "$attest" ]; then
+              echo "FAILED: $name@$ver has no provenance attestation"
+              exit 1
+            fi
+            echo "$name@$ver: provenance attested"
+          done
+          npm audit signatures

@@ -1,0 +1,63 @@
+{
+  "name": "@sekimori/codemod",
+  "version": "0.0.0",
+  "description": "Codemod: aws-xray-sdk-core / Powertools for AWS Lambda Tracer → OpenTelemetry API (sekimori migrate).",
+  "keywords": [
+    "opentelemetry",
+    "aws",
+    "x-ray",
+    "codemod",
+    "migration",
+    "powertools"
+  ],
+  "author": {
+    "name": "Shiro Seike",
+    "url": "https://github.com/seike460"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seike460/sekimori.git",
+    "directory": "packages/codemod"
+  },
+  "homepage": "https://github.com/seike460/sekimori#readme",
+  "bugs": {
+    "url": "https://github.com/seike460/sekimori/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "check-exports": "attw --pack . --profile esm-only && publint ."
+  },
+  "dependencies": {
+    "ignore": "^7.0.9",
+    "ts-morph": "^28.0.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
+    "@types/node": "^24.0.0",
+    "publint": "^0.3.0",
+    "tsdown": "^0.22.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}

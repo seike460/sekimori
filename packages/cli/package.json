@@ -1,0 +1,63 @@
+{
+  "name": "@sekimori/cli",
+  "version": "0.0.0",
+  "description": "sekimori CLI — probe (prove the trace link), migrate (X-Ray SDK → OpenTelemetry codemod), doctor (Lambda OTel readiness).",
+  "keywords": [
+    "opentelemetry",
+    "aws",
+    "lambda",
+    "x-ray",
+    "tracing",
+    "codemod"
+  ],
+  "homepage": "https://github.com/seike460/sekimori#readme",
+  "bugs": {
+    "url": "https://github.com/seike460/sekimori/issues"
+  },
+  "author": {
+    "name": "Shiro Seike",
+    "url": "https://github.com/seike460"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seike460/sekimori.git",
+    "directory": "packages/cli"
+  },
+  "type": "module",
+  "bin": {
+    "sekimori": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "check-exports": "attw --pack . --profile esm-only && publint ."
+  },
+  "dependencies": {
+    "@sekimori/codemod": "workspace:*",
+    "@sekimori/doctor": "workspace:*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
+    "publint": "^0.3.0",
+    "tsdown": "^0.22.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,5 @@
+# 開発 toolchain の pin。engines/node>=22 の下限に合わせる。
+# package.json の packageManager (pnpm@10.34.5) と CI の pnpm/action-setup に揃える。
+[tools]
+node = "22"
+pnpm = "10.34.5"

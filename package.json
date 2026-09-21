@@ -1,0 +1,45 @@
+{
+  "name": "sekimori-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "sekimori (関守) — carries trace context through every gate of your TypeScript Lambda, and walks it from the X-Ray SDK to OpenTelemetry",
+  "author": {
+    "name": "Shiro Seike",
+    "url": "https://github.com/seike460"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "build": "pnpm -r --filter './packages/*' run build",
+    "test": "vitest run --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
+    "test:integration": "vitest run --project integration",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "ci": "biome ci .",
+    "type-check": "pnpm -r --filter './packages/*' --filter './probe/*' run type-check",
+    "check-exports": "pnpm -r --filter './packages/*' run check-exports",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm run build && changeset publish",
+    "probe:synth": "pnpm --filter @sekimori/probe run synth"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.30.0",
+    "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
