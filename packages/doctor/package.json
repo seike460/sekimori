@@ -1,0 +1,64 @@
+{
+  "name": "@sekimori/doctor",
+  "version": "0.0.0",
+  "description": "sekimori doctor — read-only OpenTelemetry readiness report for Lambda functions and cdk.out templates.",
+  "keywords": [
+    "opentelemetry",
+    "aws",
+    "lambda",
+    "x-ray",
+    "adot",
+    "diagnostics"
+  ],
+  "author": {
+    "name": "Shiro Seike",
+    "url": "https://github.com/seike460"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seike460/sekimori.git",
+    "directory": "packages/doctor"
+  },
+  "homepage": "https://github.com/seike460/sekimori#readme",
+  "bugs": {
+    "url": "https://github.com/seike460/sekimori/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "check-exports": "attw --pack . --profile esm-only && publint ."
+  },
+  "dependencies": {
+    "@aws-sdk/client-iam": "^3.0.0",
+    "@aws-sdk/client-lambda": "^3.0.0",
+    "sekimori": "workspace:*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
+    "@types/node": "^24.0.0",
+    "publint": "^0.3.0",
+    "tsdown": "^0.22.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}

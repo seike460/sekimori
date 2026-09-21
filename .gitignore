@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+cdk.out/
+*.tsbuildinfo
+.DS_Store
+*.local
+docs/evidence/*.json
+!docs/evidence/README.md
+probe/cdk/cdk.outputs.json
+.env
+.env.*
+!.env.example

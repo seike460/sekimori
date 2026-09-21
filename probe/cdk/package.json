@@ -1,0 +1,32 @@
+{
+  "name": "@sekimori/probe",
+  "version": "0.0.0",
+  "private": true,
+  "description": "sekimori probe — a permanent integration path (emitter → EventBridge → SQS → consumer) that proves the trace link and publishes a connectivity report.",
+  "type": "module",
+  "scripts": {
+    "synth": "cdk synth --quiet",
+    "deploy": "cdk deploy --require-approval never --outputs-file cdk.outputs.json",
+    "destroy": "cdk destroy --force",
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "assert": "tsx assert.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.0.0",
+    "@aws-sdk/client-eventbridge": "^3.0.0",
+    "@aws-sdk/client-lambda": "^3.0.0",
+    "@aws-sdk/client-xray": "^3.0.0",
+    "@opentelemetry/api": "^1.9.0",
+    "aws-cdk-lib": "^2.200.0",
+    "constructs": "^10.4.0",
+    "sekimori": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.150",
+    "aws-cdk": "^2.1000.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}

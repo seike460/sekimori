@@ -1,0 +1,79 @@
+# CI gates (PR/push): biome lint → build → typecheck → vitest on Node 22/24
+# with coverage → packaging checks (attw + publint + CDK probe synth).
+# pnpm は version pin、`--frozen-lockfile` で再現性を固定する。
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          # packageManager (pnpm@10.34.5) に合わせる
+          version: 10.34.5
+          run_install: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint (biome ci)
+        run: pnpm run ci
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          # packageManager (pnpm@10.34.5) に合わせる
+          version: 10.34.5
+          run_install: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build (probe type-checks against the built dist)
+        run: pnpm run build
+      - name: Type check
+        run: pnpm run type-check
+      - name: Unit tests (with coverage)
+        run: pnpm run test:coverage
+
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          # packageManager (pnpm@10.34.5) に合わせる
+          version: 10.34.5
+          run_install: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build (probe synth needs the built dist)
+        run: pnpm run build
+      - name: Check exports (attw + publint)
+        run: pnpm run check-exports
+      - name: Probe stack synth (no deploy)
+        run: pnpm run probe:synth

@@ -1,0 +1,179 @@
+{
+  "name": "sekimori",
+  "version": "0.0.0",
+  "description": "関守 — carries OpenTelemetry trace context through every gate of your TypeScript Lambda: EventBridge, SQS, SNS, Step Functions.",
+  "keywords": [
+    "opentelemetry",
+    "otel",
+    "aws",
+    "lambda",
+    "serverless",
+    "eventbridge",
+    "sqs",
+    "tracing",
+    "propagation",
+    "x-ray",
+    "adot",
+    "application-signals"
+  ],
+  "author": {
+    "name": "Shiro Seike",
+    "url": "https://github.com/seike460"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seike460/sekimori.git",
+    "directory": "packages/sekimori"
+  },
+  "homepage": "https://github.com/seike460/sekimori#readme",
+  "bugs": {
+    "url": "https://github.com/seike460/sekimori/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./apigw": {
+      "import": {
+        "types": "./dist/apigw.d.ts",
+        "default": "./dist/apigw.js"
+      },
+      "require": {
+        "types": "./dist/apigw.d.cts",
+        "default": "./dist/apigw.cjs"
+      }
+    },
+    "./dynamodb": {
+      "import": {
+        "types": "./dist/dynamodb.d.ts",
+        "default": "./dist/dynamodb.js"
+      },
+      "require": {
+        "types": "./dist/dynamodb.d.cts",
+        "default": "./dist/dynamodb.cjs"
+      }
+    },
+    "./eventbridge": {
+      "import": {
+        "types": "./dist/eventbridge.d.ts",
+        "default": "./dist/eventbridge.js"
+      },
+      "require": {
+        "types": "./dist/eventbridge.d.cts",
+        "default": "./dist/eventbridge.cjs"
+      }
+    },
+    "./kinesis": {
+      "import": {
+        "types": "./dist/kinesis.d.ts",
+        "default": "./dist/kinesis.js"
+      },
+      "require": {
+        "types": "./dist/kinesis.d.cts",
+        "default": "./dist/kinesis.cjs"
+      }
+    },
+    "./semconv": {
+      "import": {
+        "types": "./dist/semconv.d.ts",
+        "default": "./dist/semconv.js"
+      },
+      "require": {
+        "types": "./dist/semconv.d.cts",
+        "default": "./dist/semconv.cjs"
+      }
+    },
+    "./sfn": {
+      "import": {
+        "types": "./dist/sfn.d.ts",
+        "default": "./dist/sfn.js"
+      },
+      "require": {
+        "types": "./dist/sfn.d.cts",
+        "default": "./dist/sfn.cjs"
+      }
+    },
+    "./sns": {
+      "import": {
+        "types": "./dist/sns.d.ts",
+        "default": "./dist/sns.js"
+      },
+      "require": {
+        "types": "./dist/sns.d.cts",
+        "default": "./dist/sns.cjs"
+      }
+    },
+    "./sqs": {
+      "import": {
+        "types": "./dist/sqs.d.ts",
+        "default": "./dist/sqs.js"
+      },
+      "require": {
+        "types": "./dist/sqs.d.cts",
+        "default": "./dist/sqs.cjs"
+      }
+    },
+    "./tracer": {
+      "import": {
+        "types": "./dist/tracer.d.ts",
+        "default": "./dist/tracer.js"
+      },
+      "require": {
+        "types": "./dist/tracer.d.cts",
+        "default": "./dist/tracer.cjs"
+      }
+    },
+    "./xray": {
+      "import": {
+        "types": "./dist/xray.d.ts",
+        "default": "./dist/xray.js"
+      },
+      "require": {
+        "types": "./dist/xray.d.cts",
+        "default": "./dist/xray.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "check-exports": "attw --pack . --profile node16 && publint ."
+  },
+  "peerDependencies": {
+    "@opentelemetry/api": "^1.9.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/context-async-hooks": "^2.0.0",
+    "@opentelemetry/core": "^2.0.0",
+    "@opentelemetry/propagator-aws-xray": "^2.0.0",
+    "@opentelemetry/sdk-trace-base": "^2.0.0",
+    "fast-check": "^4.0.0",
+    "publint": "^0.3.0",
+    "tsdown": "^0.22.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  }
+}
